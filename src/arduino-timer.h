@@ -194,19 +194,16 @@ class Timer {
         return true;
     }
 
-    Timer() : ctr(0), tasks{} {}
+    Timer() : tasks{} {}
 
   private:
-
-    size_t ctr;
 
     struct task {
         handler_t handler; /* task handler callback func */
         T opaque; /* argument given to the callback handler */
         unsigned long start,
                       expires; /* when the task expires */
-        size_t repeat, /* repeat task */
-               id;
+        size_t repeat;
     } tasks[max_tasks];
 
     inline
@@ -218,7 +215,6 @@ class Timer {
         task->start = 0;
         task->expires = 0;
         task->repeat = 0;
-        task->id = 0;
     }
 
     inline
@@ -227,7 +223,7 @@ class Timer {
     {
         const Task id = reinterpret_cast<Task>(t);
 
-        return id ? id ^ t->id : id;
+        return id;
     }
 
     inline
@@ -250,9 +246,6 @@ class Timer {
 
         if (!slot) return NULL;
 
-        if (++ctr == 0) ++ctr; // overflow
-
-        slot->id = ctr;
         slot->handler = h;
         slot->opaque = opaque;
         slot->start = start;
