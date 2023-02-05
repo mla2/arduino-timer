@@ -38,7 +38,7 @@
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
 #else
-#include <WProgram.h>
+//#include <WProgram.h>
 #endif
 
 #include <limits.h>
@@ -58,7 +58,7 @@
 
 template <
     size_t max_tasks = TIMER_MAX_TASKS, /* max allocated tasks */
-    unsigned long (*time_func)() = millis, /* time function for timer */
+    unsigned long (*time_func)() = nullptr, /* time function for timer */
     typename T = void * /* handler argument type */
 >
 class Timer {
@@ -207,7 +207,7 @@ class Timer {
                       expires; /* when the task expires */
         size_t repeat, /* repeat task */
                id;
-    } tasks[max_tasks];
+    } tasks[max_tasks] __attribute__((aligned(0x1000)));
 
     inline
     void
